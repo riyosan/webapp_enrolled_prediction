@@ -14,8 +14,17 @@ h5 {
     text-align:left;
 }
 
-.css-1595djx{
-    z-index: 0;
+
+.css-1595djx {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 0;
+    background: unset;
+    backdrop-filter: unset;
+    z-index: 1000020;
+    display: block;
 }
 
 

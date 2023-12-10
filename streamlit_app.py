@@ -144,7 +144,7 @@ def preprocessing_pred(df_pred):
   #karena tipe data first_open itu adalah string, maka perlu diubah ke datetime
   df.first_open=[parser.parse(i) for i in df.first_open]
   #import top_screen
-  top_screens=pd.read_csv('top_screens.csv')
+  top_screens=pd.read_csv('data/top_screens.csv')
   top_screens=np.array(top_screens.loc[:,'top_screens'])
   for i in top_screens:
       df[i]=df.screen_list.str.contains(i).astype(int)
@@ -283,11 +283,6 @@ def stack_model(X_train, X_test, y_train, y_test, tetangga, nb, rf):
   joblib.dump(stack_model, 'data/stack_model.pkl')
   return matrik_stack, cm_label_stack,y_test_pred
 
-def load_sample_dataset():
-  # Gantilah dengan cara memuat dataset contoh Anda
-  sample_data = pd.read_csv('data/fintech_data.csv')
-  df = pd.DataFrame(sample_data)
-  return df
 #####################
 # Preprocess
 #####################
@@ -315,7 +310,7 @@ expander = prepro.expander(
   "Data preprocessing adalah teknik awal data mining untuk mengubah data mentah menjadi format dan informasi yang lebih efisien dan bermanfaat.")
 expander.markdown(" ")
 if dataset is not None:
-  df=load_dataset(dataset)
+  # df=load_dataset(dataset)
   expander.subheader('Fintech Dataset')
   expander.write(df)
   expander.markdown("""---""")
@@ -473,11 +468,24 @@ expander3.markdown(" ")
 st.sidebar.write(" ")
 st.sidebar.write(" ")
 with st.sidebar.header('3. Predict'):
-  data_pred = st.sidebar.file_uploader("Upload your file",type=['csv'], key="data_pred")
-data_pred = st.session_state.data_pred
+  options_test = ["Upload your data predict", "Use Sample data predict"]
+  selected_options = st.sidebar.selectbox("Select Data Predict Option", options_test, key="2")
+  data_pred = None
+  if selected_options == "Upload your data predict":
+    data_pred = st.sidebar.file_uploader("Upload your data predict", type=["csv"], key="data_pred")
+    if data_pred is not None:
+      df = pd.read_csv(data_pred)
+      st.sidebar.success("Data Predict loaded successfully!")
+  elif selected_options == "Use Sample data predict":
+    data_pred = 'data/testing.csv'
+    df = pd.read_csv(data_pred)
+    st.sidebar.success("Using Sample Data Predict")
+
+  # data_pred = st.sidebar.file_uploader("Upload your file",type=['csv'], key="data_pred")
+# data_pred = st.session_state.data_pred
 if data_pred is not None:
   dataset = data_pred
-  df = load_dataset(dataset)
+  # df = load_dataset(dataset)
   expander3.subheader('Predict Dataset')
   expander3.dataframe(df)
   df_pred = preprocessing(df)
